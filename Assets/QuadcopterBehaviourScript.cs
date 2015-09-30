@@ -3,36 +3,74 @@ using System.Collections;
 
 /// <summary>
 /// PID controller.
+/// Arducopter has defaults:
+/// Rate Roll: P=0.168, I=0, D=0.008, IMAX=5.0
+/// Rate Pitch: P=0.168, I=0.0, D=0.008, IMAX=5.0
+/// Rate Yaw: P=0.25, I=0.015, D=0, IMAX=8.0
+/// They also use Stabilise Roll, Pitch, Yaw and Throttle Rate and Altitude Hold
+/// This is the best intro on PID:
+/// http://brettbeauregard.com/blog/2011/04/improving-the-beginners-pid-introduction/
 /// </summary>
 public class PIDController {
 	public float Kp=1.0f; //Proportional gain constant
 	public float Ki=1.0f; //Integral gain constant
 	public float Kd=1.0f; //Derivative gain constant
+	public float Imax=5.0f; //max limit on I
+	public float SampleTime = 0.01f; //seconds interval at which computation is done
+	public float elapsedDeltaT = 0; //time since last update
 
+	private float x0; //previous input value
 	private float e0; //previous error value
 	private float I; //Integral accumulator
 	private float D; //Derivative accumulator
+	private float u; //copy of last output value
 
-	public PIDController(float Kp,float Ki,float Kd) {
+	public PIDController(float Kp,float Ki,float Kd,float Imax) {
 		this.Kp = Kp;
 		this.Ki = Ki;
 		this.Kd = Kd;
+		this.Imax = Imax;
+		x0 = 0;
 		e0 = 0;
 		I = 0;
 		D = 0;
+		u = 0;
+	}
+
+	public string debugToString() {
+		return this.e0 + " " + this.I + " " + this.D;
 	}
 
 	/// <summary>
 	/// Run the PID calculation with a new error value and delta time from the last calculation.
 	/// </summary>
-	/// <param name="e">Error value</param>
+	/// //<param name="e">Error value</param>
+	/// <param name="x">Current Value</param>
+	/// <param name="y">Desired Value</param> 
 	/// <param name="deltaT">Time elapsed since process was last called i.e. time between e and e0</param>
-	public float process(float e,float deltaT) {
+	/// <returns>u=Kp*e + Ki*I + Kd*D</returns>
+	public float process(/*float e*/float x, float y,float deltaT) {
 		//assert deltaT>0 ?
-		I += (deltaT / 2.0f) * (e0 + e);
-		D += (e - e0) / deltaT;
-		float u = Kp * e + Ki * I + Kd * D; //standard PID formula
-		e0 = e;
+		elapsedDeltaT += deltaT;
+		if (elapsedDeltaT >= SampleTime) {
+			float e = y - x; //current error
+			//I += (deltaT / 2.0f) * (e0 + e);
+			//I += e * deltaT;
+			I+=e*SampleTime;
+			if (I > Imax)
+				I = Imax;
+			else if (I < -Imax)
+				I = -Imax;
+			//D += (e - e0) / deltaT;
+			//D = (e - e0) / deltaT;
+			//D = (e - e0) / SampleTime;
+			float dx = (x - x0) / SampleTime; //change in input, or dInput/dt, this is the derivative kick fix
+			//u = Kp * e + Ki * I + Kd * D; //standard PID formula
+			u = Kp * e + Ki * I + Kd * dx; //derivative kick modification
+			e0 = e;
+			x0 = x;
+			elapsedDeltaT=0; //or -=SampleTime?
+		}
 		return u;
 	}
 }
@@ -41,9 +79,13 @@ public class QuadcopterBehaviourScript : MonoBehaviour {
 	Rect textArea = new Rect(0,0,Screen.width, Screen.height);
 	Rigidbody rb;
 
-	PIDController pidAileron = new PIDController (0.5f, 0.0001f, 0.0001f);
-	PIDController pidElevator = new PIDController(0.5f,0.0001f,0.0001f);
-	PIDController pidRudder = new PIDController(0.5f,0.0001f,0.0001f);
+	//PIDController pidAileron = new PIDController (0.5f, 0.0001f, 0.0001f);
+	//PIDController pidElevator = new PIDController(0.5f,0.0001f,0.0001f);
+	//PIDController pidRudder = new PIDController(0.5f,0.0001f,0.0001f);
+	//arducopter
+	PIDController pidAileron = new PIDController (0.4f, 0.002f, 0.01f, 5.0f); //0.168f, 0.0f, 0.0f, 5.0f
+	PIDController pidElevator = new PIDController(0.4f, 0.002f, 0.01f, 5.0f);
+	PIDController pidRudder = new PIDController(0.24f,0.008f,0.001f,5.0f); //1.2f,0.015f,0.001f,5.0f
 	float aileron, elevator, rudder, throttle;
 	float txRollAngle, txPitchAngle, txYawRate;
 	float rollAngle, pitchAngle, yawRate;
@@ -52,7 +94,11 @@ public class QuadcopterBehaviourScript : MonoBehaviour {
 		GUI.Label(textArea,"A: "+txRollAngle+" ("+rollAngle+")\n"
 		          +"E: "+txPitchAngle+" ("+pitchAngle+")\n"
 		          +"R: "+txYawRate+"("+yawRate+")\n"
-		          +"T: "+throttle);
+		          +"T: "+throttle+"\n"
+		          //+rb.inertiaTensor.x+" "+rb.inertiaTensor.y+" "+rb.inertiaTensor.z+"\n"
+		          //+rb.inertiaTensorRotation.x+" "+rb.inertiaTensorRotation.y+" "+rb.inertiaTensorRotation.z);
+		          +pidRudder.debugToString()
+		);
 	}
 
 	// Use this for initialization
@@ -61,8 +107,10 @@ public class QuadcopterBehaviourScript : MonoBehaviour {
 
 		// Change the mass of the object's Rigidbody.
 		rb.mass = 1.0f;
-		rb.drag = 0.5f;
-		rb.angularDrag = 4.0f; //or inertiaTensor? what units is this in?
+		rb.drag = 0.4f;
+		rb.angularDrag = 4.5f; //or inertiaTensor? what units is this in?
+		rb.centerOfMass = new Vector3 (0, 0, 0);
+		rb.inertiaTensor = new Vector3 (1.0f,1.0f,1.0f);
 	}
 	
 	// Update is called once per frame
@@ -83,15 +131,25 @@ public class QuadcopterBehaviourScript : MonoBehaviour {
 		aileron = 0; //(Input.mousePosition.x-Screen.width/2.0f)/Screen.width*2.0f; //todo: tidy formula
 		elevator = -(Input.mousePosition.y-Screen.height/2.0f)/Screen.height*2.0f;
 		rudder = (Input.mousePosition.x-Screen.width/2.0f)/Screen.width*2.0f;
+
+		//joystick - the MAD CATZ has left stick Horizontal/Vertical, right stick Yaw/Throttle
+		//MadCatz has JoyAxis3=3rd Axis and JoyAxis4=4th Axis
+		aileron = Input.GetAxis ("JoyAxis3");
+		elevator = Input.GetAxis ("JoyAxis4");
+		rudder = Input.GetAxis ("Horizontal");
+		throttle = Input.GetAxis ("Vertical"); //NOTE: +-1.0
+
+		//Speedlink NX has JoyAxis3=4th Axis and JoyAxis4=5th Axis
+
 		//convert to requested angles etc
-		float thrust = 10.0f;
+		float thrust = 10.0f+throttle*5.0f;
 		//ailerons and elevator set requested angles to horizontal, rudder sets rotation speed
-		txRollAngle = -aileron * 20.0f; //degrees - TODO: need to fix axis problem here
-		txPitchAngle = elevator * 20.0f; //degrees
-		txYawRate = rudder * 4.0f; //degrees per second (?)
+		txRollAngle = -aileron * 40.0f; //degrees - TODO: need to fix axis problem here
+		txPitchAngle = elevator * 40.0f; //degrees
+		txYawRate = rudder * 24.0f; //degrees per second (?)
 
 		//current body angles
-		Vector3 euler = transform.eulerAngles; //localEulerAngles?
+		Vector3 euler = transform.localEulerAngles; //was eulerAngles, but localEulerAngles seems better?
 		rollAngle = euler.x;
 		if (rollAngle > 180.0f)
 			rollAngle = rollAngle - 360.0f;
@@ -101,9 +159,13 @@ public class QuadcopterBehaviourScript : MonoBehaviour {
 		yawRate = rb.angularVelocity.z; //degrees per second?
 
 		//PID Calculations using errors
-		float P = pidAileron.process (txRollAngle - rollAngle, Time.deltaTime);
-		float Q = pidElevator.process (txPitchAngle - pitchAngle, Time.deltaTime);
-		float R = pidRudder.process (txYawRate - yawRate, Time.deltaTime);
+		//float P = pidAileron.process (txRollAngle - rollAngle, Time.deltaTime);
+		//float Q = pidElevator.process (txPitchAngle - pitchAngle, Time.deltaTime);
+		//float R = pidRudder.process (txYawRate - yawRate, Time.deltaTime);
+		//PID Calculations using actual, desired which the error is calculated from
+		float P = pidAileron.process (rollAngle, txRollAngle, Time.deltaTime);
+		float Q = pidElevator.process (pitchAngle, txPitchAngle, Time.deltaTime);
+		float R = pidRudder.process (yawRate, txYawRate, Time.deltaTime);
 
 		//float driveForce = 150.0f;
 		//Vector3 force = transform.forward * driveForce * Input.GetAxis("Vertical");
