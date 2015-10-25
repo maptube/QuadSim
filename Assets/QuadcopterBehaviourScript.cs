@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 
 /// <summary>
@@ -86,6 +87,9 @@ public class QuadcopterBehaviourScript : MonoBehaviour {
 	PIDController pidAileron = new PIDController (0.4f, 0.002f, 0.01f, 5.0f); //0.168f, 0.0f, 0.0f, 5.0f
 	PIDController pidElevator = new PIDController(0.4f, 0.002f, 0.01f, 5.0f);
 	PIDController pidRudder = new PIDController(0.24f,0.008f,0.001f,5.0f); //1.2f,0.015f,0.001f,5.0f
+	PIDController pidAltitude = new PIDController(0.8f,0.01f,0,5.0f);
+	bool AltitudeHoldModeEnabled = false;
+	float AltitudeHold = 0; //altitude to hold to
 	float aileron, elevator, rudder, throttle;
 	float txRollAngle, txPitchAngle, txYawRate;
 	float rollAngle, pitchAngle, yawRate;
@@ -120,10 +124,29 @@ public class QuadcopterBehaviourScript : MonoBehaviour {
 		//transform.Translate(Vector3.right * distance);
 		//Rigidbody rb = GetComponent<Rigidbody>();
 		//transform.Translate (rb.velocity);
+
+		//UI stuff
+		if (Input.GetButtonDown ("SpeedlinkButtonB")) {
+			if (AltitudeHoldModeEnabled) {
+				//it's currently on, so switch it off
+				AltitudeHoldModeEnabled=false;
+				GameObject but = GameObject.Find("AltHoldButton");
+				but.GetComponentInChildren<Text>().text = "Alt Hold OFF (B)";
+			}
+			else {
+				AltitudeHoldModeEnabled=true;
+				AltitudeHold=rb.position.y;
+				GameObject but = GameObject.Find("AltHoldButton");
+				but.GetComponentInChildren<Text>().text = "Alt Hold ON (B)";
+			}
+		}
 	}
 
 	//physics body pre-update
 	void FixedUpdate() {
+		//Axis system is defined as +Z forwards, +X right and +Y up
+		//Aileron rotation is Z, Elevator rotation is X and Rudder rotation is Y
+
 		//user control inputs
 		//rudder = Input.GetAxis("Mouse X")-Screen.width/2;
 		//elevator = Input.GetAxis ("Mouse Y"); //-Screen.height/2;
@@ -134,29 +157,41 @@ public class QuadcopterBehaviourScript : MonoBehaviour {
 
 		//joystick - the MAD CATZ has left stick Horizontal/Vertical, right stick Yaw/Throttle
 		//MadCatz has JoyAxis3=3rd Axis and JoyAxis4=4th Axis
-		aileron = Input.GetAxis ("JoyAxis3");
-		elevator = Input.GetAxis ("JoyAxis4");
+		//aileron = Input.GetAxis ("MadCatzAxisAileron");
+		//elevator = Input.GetAxis ("MadCatzAxisElevator");
+		//rudder = Input.GetAxis ("Horizontal");
+		//throttle = Input.GetAxis ("Vertical"); //NOTE: +-1.0
+
+		//Speedlink NX has JoyAxis3=4th Axis and JoyAxis4=5th Axis
+		aileron = Input.GetAxis ("SpeedlinkAxisAileron");
+		elevator = Input.GetAxis ("SpeedlinkAxisElevator");
 		rudder = Input.GetAxis ("Horizontal");
 		throttle = Input.GetAxis ("Vertical"); //NOTE: +-1.0
 
-		//Speedlink NX has JoyAxis3=4th Axis and JoyAxis4=5th Axis
+		//Altitude hold controller - override the throttle
+		if (AltitudeHoldModeEnabled) {
+			throttle = pidAltitude.process(rb.position.y,AltitudeHold,Time.deltaTime);
+		}
 
 		//convert to requested angles etc
 		float thrust = 10.0f+throttle*5.0f;
 		//ailerons and elevator set requested angles to horizontal, rudder sets rotation speed
 		txRollAngle = -aileron * 40.0f; //degrees - TODO: need to fix axis problem here
-		txPitchAngle = elevator * 40.0f; //degrees
+		txPitchAngle = -elevator * 40.0f; //degrees
 		txYawRate = rudder * 24.0f; //degrees per second (?)
 
 		//current body angles
 		Vector3 euler = transform.localEulerAngles; //was eulerAngles, but localEulerAngles seems better?
-		rollAngle = euler.x;
+		//rollAngle = euler.x; //original
+		rollAngle = euler.z;
 		if (rollAngle > 180.0f)
 			rollAngle = rollAngle - 360.0f;
-		pitchAngle = euler.z;
+		//pitchAngle = euler.z; //original
+		pitchAngle = euler.x;
 		if (pitchAngle > 180.0f)
 			pitchAngle = pitchAngle - 360.0f;
-		yawRate = rb.angularVelocity.z; //degrees per second?
+		//yawRate = rb.angularVelocity.z; //degrees per second? //original
+		yawRate = rb.angularVelocity.y;
 
 		//PID Calculations using errors
 		//float P = pidAileron.process (txRollAngle - rollAngle, Time.deltaTime);
@@ -188,7 +223,8 @@ public class QuadcopterBehaviourScript : MonoBehaviour {
 		//rb.AddTorque (new Vector3 (-Q, 0, P)); //elevator, aileron
 		//rb.AddTorque(new Vector3(-Q,R,0)); //elevator, rudder
 
-		rb.AddRelativeTorque(new Vector3(P,R,Q));
+		//rb.AddRelativeTorque(new Vector3(P,R,Q)); //this is the original one
+		rb.AddRelativeTorque (new Vector3 (Q, R, P));
 	}
 
 }
