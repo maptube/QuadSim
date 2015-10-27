@@ -45,7 +45,7 @@ public class LookAtQuadcopter : MonoBehaviour {
 	}
 
 	//Switches the view to the next one in the sequence.
-	void ToggleViewpoint() {
+	public void ToggleViewpoint() {
 		switch (_ViewType) {
 		case ViewpointType.vpFPV:
 			_ViewType = ViewpointType.vpGimbal;
@@ -57,6 +57,9 @@ public class LookAtQuadcopter : MonoBehaviour {
 			_ViewType=ViewpointType.vpFPV;
 			break;
 		}
+		//and set the button text
+		GameObject but = GameObject.Find("ViewpointButton");
+		but.GetComponentInChildren<Text>().text = ViewpointText() + "(A)";
 	}
 
 	// Use this for initialization
@@ -70,9 +73,6 @@ public class LookAtQuadcopter : MonoBehaviour {
 		if (Input.GetKeyDown (KeyCode.A) || Input.GetButtonDown("SpeedlinkButtonA")) {
 			//viewpoint type toggle
 			ToggleViewpoint ();
-			//and set the button text
-			GameObject but = GameObject.Find("ViewpointButton");
-			but.GetComponentInChildren<Text>().text = ViewpointText() + "(A)";
 		}
 		//end UI stuff
 

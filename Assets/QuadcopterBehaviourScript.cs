@@ -25,6 +25,7 @@ public class PIDController {
 	private float I; //Integral accumulator
 	private float D; //Derivative accumulator
 	private float u; //copy of last output value
+	
 
 	public PIDController(float Kp,float Ki,float Kd,float Imax) {
 		this.Kp = Kp;
@@ -94,6 +95,32 @@ public class QuadcopterBehaviourScript : MonoBehaviour {
 	float txRollAngle, txPitchAngle, txYawRate;
 	float rollAngle, pitchAngle, yawRate;
 
+	//reset the quad back to the home position i.e. start again
+	public void resetHome() {
+		AltitudeHoldModeEnabled = false;
+		rb.position = new Vector3 (6.09f, 2.03f, 15.3f);
+		rb.velocity = new Vector3 (0, 0, 0);
+		rb.angularVelocity = new Vector3 (0, 0, 0);
+		//zero pid controllers?
+		//put viewpoint back?
+	}
+
+	//toggle the altitude hold controller on or off
+	public void ToggleAltHold() {
+		if (AltitudeHoldModeEnabled) {
+			//it's currently on, so switch it off
+			AltitudeHoldModeEnabled=false;
+			GameObject but = GameObject.Find("AltHoldButton");
+			but.GetComponentInChildren<Text>().text = "Alt Hold OFF (B)";
+		}
+		else {
+			AltitudeHoldModeEnabled=true;
+			AltitudeHold=rb.position.y;
+			GameObject but = GameObject.Find("AltHoldButton");
+			but.GetComponentInChildren<Text>().text = "Alt Hold ON (B)";
+		}
+	}
+	
 	void OnGUI() {
 		GUI.Label(textArea,"A: "+txRollAngle+" ("+rollAngle+")\n"
 		          +"E: "+txPitchAngle+" ("+pitchAngle+")\n"
@@ -127,18 +154,7 @@ public class QuadcopterBehaviourScript : MonoBehaviour {
 
 		//UI stuff
 		if (Input.GetButtonDown ("SpeedlinkButtonB")) {
-			if (AltitudeHoldModeEnabled) {
-				//it's currently on, so switch it off
-				AltitudeHoldModeEnabled=false;
-				GameObject but = GameObject.Find("AltHoldButton");
-				but.GetComponentInChildren<Text>().text = "Alt Hold OFF (B)";
-			}
-			else {
-				AltitudeHoldModeEnabled=true;
-				AltitudeHold=rb.position.y;
-				GameObject but = GameObject.Find("AltHoldButton");
-				but.GetComponentInChildren<Text>().text = "Alt Hold ON (B)";
-			}
+			ToggleAltHold ();
 		}
 	}
 
@@ -154,6 +170,7 @@ public class QuadcopterBehaviourScript : MonoBehaviour {
 		aileron = 0; //(Input.mousePosition.x-Screen.width/2.0f)/Screen.width*2.0f; //todo: tidy formula
 		elevator = -(Input.mousePosition.y-Screen.height/2.0f)/Screen.height*2.0f;
 		rudder = (Input.mousePosition.x-Screen.width/2.0f)/Screen.width*2.0f;
+		throttle = 0;
 
 		//joystick - the MAD CATZ has left stick Horizontal/Vertical, right stick Yaw/Throttle
 		//MadCatz has JoyAxis3=3rd Axis and JoyAxis4=4th Axis
@@ -163,10 +180,18 @@ public class QuadcopterBehaviourScript : MonoBehaviour {
 		//throttle = Input.GetAxis ("Vertical"); //NOTE: +-1.0
 
 		//Speedlink NX has JoyAxis3=4th Axis and JoyAxis4=5th Axis
-		aileron = Input.GetAxis ("SpeedlinkAxisAileron");
-		elevator = Input.GetAxis ("SpeedlinkAxisElevator");
-		rudder = Input.GetAxis ("Horizontal");
-		throttle = Input.GetAxis ("Vertical"); //NOTE: +-1.0
+		//aileron = Input.GetAxis ("SpeedlinkAxisAileron");
+		//elevator = Input.GetAxis ("SpeedlinkAxisElevator");
+		//rudder = Input.GetAxis ("Horizontal");
+		//throttle = Input.GetAxis ("Vertical"); //NOTE: +-1.0
+
+		//Touch joystick for Android - NOTE, this is added to the scene as a JoystickGameObject with TXJoystick script attached, which is STATIC
+		//One stick, coupled ailerons and rudder, fixed throttle
+		//Vector2 v = TXJoystickScript.VJRvector;
+		Vector2 v = TXJoystickScript.VJRnormals;
+		aileron = v.x/4; //coupled rudder aileron
+		elevator = -v.y;
+		rudder = v.x;
 
 		//Altitude hold controller - override the throttle
 		if (AltitudeHoldModeEnabled) {
@@ -207,8 +232,6 @@ public class QuadcopterBehaviourScript : MonoBehaviour {
 		//GetComponent<Rigidbody>().AddForce(force);
 
 
-
-		//todo: need PID controller here..
 
 		//rb.AddForce(transform.up * thrust);
 		rb.AddRelativeForce (new Vector3 (0, thrust, 0));
