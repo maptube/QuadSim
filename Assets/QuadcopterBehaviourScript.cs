@@ -98,7 +98,8 @@ public class QuadcopterBehaviourScript : MonoBehaviour {
 	//reset the quad back to the home position i.e. start again
 	public void resetHome() {
 		AltitudeHoldModeEnabled = false;
-		rb.position = new Vector3 (6.09f, 2.03f, 15.3f);
+		//rb.position = new Vector3 (6.09f, 2.03f, 15.3f); //original reset position for desert terrain
+		rb.position = new Vector3 (-6.77f,-29.7f,-194.23f); //Lima reset position in the green area at the bottom
 		rb.velocity = new Vector3 (0, 0, 0);
 		rb.angularVelocity = new Vector3 (0, 0, 0);
 		//zero pid controllers?
@@ -172,6 +173,8 @@ public class QuadcopterBehaviourScript : MonoBehaviour {
 		rudder = (Input.mousePosition.x-Screen.width/2.0f)/Screen.width*2.0f;
 		throttle = 0;
 
+		//TODO: need to check platform (Android touch controller), then if Windows, test for joystick (which one?), then fall back to mouse control
+
 		//joystick - the MAD CATZ has left stick Horizontal/Vertical, right stick Yaw/Throttle
 		//MadCatz has JoyAxis3=3rd Axis and JoyAxis4=4th Axis
 		//aileron = Input.GetAxis ("MadCatzAxisAileron");
@@ -180,18 +183,20 @@ public class QuadcopterBehaviourScript : MonoBehaviour {
 		//throttle = Input.GetAxis ("Vertical"); //NOTE: +-1.0
 
 		//Speedlink NX has JoyAxis3=4th Axis and JoyAxis4=5th Axis
-		//aileron = Input.GetAxis ("SpeedlinkAxisAileron");
-		//elevator = Input.GetAxis ("SpeedlinkAxisElevator");
-		//rudder = Input.GetAxis ("Horizontal");
-		//throttle = Input.GetAxis ("Vertical"); //NOTE: +-1.0
+		aileron = Input.GetAxis ("SpeedlinkAxisAileron");
+		elevator = Input.GetAxis ("SpeedlinkAxisElevator");
+		rudder = Input.GetAxis ("Horizontal");
+		throttle = Input.GetAxis ("Vertical"); //NOTE: +-1.0
 
 		//Touch joystick for Android - NOTE, this is added to the scene as a JoystickGameObject with TXJoystick script attached, which is STATIC
 		//One stick, coupled ailerons and rudder, fixed throttle
 		//Vector2 v = TXJoystickScript.VJRvector;
-		Vector2 v = TXJoystickScript.VJRnormals;
-		aileron = v.x/4; //coupled rudder aileron
-		elevator = -v.y;
-		rudder = v.x;
+		if (Application.platform == RuntimePlatform.Android) {
+			Vector2 v = TXJoystickScript.VJRnormals;
+			aileron = v.x / 4; //coupled rudder aileron
+			elevator = -v.y;
+			rudder = v.x;
+		}
 
 		//Altitude hold controller - override the throttle
 		if (AltitudeHoldModeEnabled) {
