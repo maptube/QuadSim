@@ -196,6 +196,7 @@ public class QuadcopterBehaviourScript : MonoBehaviour {
 			aileron = v.x / 4; //coupled rudder aileron
 			elevator = -v.y;
 			rudder = v.x;
+			if (elevator>0.1f) throttle=elevator*2.0f;
 		}
 
 		//Altitude hold controller - override the throttle
