@@ -82,7 +82,9 @@ public class LookAtQuadcopter : MonoBehaviour {
 		switch (_ViewType) {
 		case ViewpointType.vpFPV:
 			transform.position = quad.transform.position;
-			transform.rotation = quad.transform.rotation;
+			transform.rotation = quad.transform.rotation; //look straight out the front of the quad
+			transform.RotateAround(quad.transform.position,quad.transform.right,-20.0f); //FPV look up
+			//NO transform.RotateAround(transform.position, Vector3.right, 20.0f); //FPV look up
 			//transform.position=quad.transform.position;
 			//transform.forward = quad.transform.forward; //make view look out the front
 			//transform.up = quad.transform.up; //in this view, the camera is fixed to the frame and rolls with it
