@@ -1,27 +1,15 @@
 fileFormatVersion: 2
-guid: f93e392e30fd4db47b89f638bd4ffc73
-timeCreated: 1448530685
+guid: d8eed8ff30998a34ebf8b2a2faa7bdd2
+timeCreated: 1450215569
 licenseType: Free
 ModelImporter:
   serializedVersion: 18
   fileIDToRecycleName:
-    100000: Gate1
-    100002: Gate2
-    100004: Plane_000
-    100006: //RootNode
-    400000: Gate1
-    400002: Gate2
-    400004: Plane_000
-    400006: //RootNode
-    2300000: Gate1
-    2300002: Gate2
-    2300004: Plane_000
-    3300000: Gate1
-    3300002: Gate2
-    3300004: Plane_000
-    4300000: Plane_000
-    4300002: Gate1
-    4300004: Gate2
+    100000: //RootNode
+    400000: //RootNode
+    2300000: //RootNode
+    3300000: //RootNode
+    4300000: Circle
     7400000: Default Take
     9500000: //RootNode
   materials:
