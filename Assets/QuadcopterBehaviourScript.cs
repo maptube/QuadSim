@@ -121,6 +121,16 @@ public class QuadcopterBehaviourScript : MonoBehaviour {
 			but.GetComponentInChildren<Text>().text = "Alt Hold ON (B)";
 		}
 	}
+
+	public void setAileronP(float Kp) {
+		pidAileron.Kp = Kp;
+	}
+	public void setAileronI(float Ki) {
+		pidAileron.Ki = Ki;
+	}
+	public void setAileronD(float Kd) {
+		pidAileron.Kd = Kd;
+	}
 	
 	void OnGUI() {
 		GUI.Label(textArea,"A: "+txRollAngle+" ("+rollAngle+")\n"

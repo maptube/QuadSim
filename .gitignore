@@ -3,6 +3,7 @@
 # =============== #
 Temp/
 Library/
+exclude-github/
 
 # ===================================== #
 # Visual Studio / MonoDevelop generated #
