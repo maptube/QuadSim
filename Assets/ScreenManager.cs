@@ -21,7 +21,7 @@ public class ScreenManager : MonoBehaviour {
 	private GameObject m_PreviouslySelected;
 	
 	//Animator State and Transition names we need to check against.
-	const string k_OpenTransitionName = "Open";
+	const string k_OpenTransitionName = "isOpen";
 	const string k_ClosedStateName = "Closed";
 	
 	public void OnEnable()
