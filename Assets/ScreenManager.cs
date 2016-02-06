@@ -34,6 +34,11 @@ public class ScreenManager : MonoBehaviour {
 			return;
 		OpenPanel(initiallyOpen);
 	}
+
+	//Return the currently open panel
+	public Animator GetCurrentlyOpen() {
+		return m_Open;
+	}
 	
 	//Closes the currently open panel and opens the provided one.
 	//It also takes care of handling the navigation, setting the new Selected element.
@@ -91,14 +96,14 @@ public class ScreenManager : MonoBehaviour {
 		//Reverting selection to the Selectable used before opening the current screen.
 		SetSelected(m_PreviouslySelected);
 		//Start Coroutine to disable the hierarchy when closing animation finishes.
-		StartCoroutine(DisablePanelDeleyed(m_Open));
+		StartCoroutine(DisablePanelDelayed(m_Open));
 		//No screen open.
 		m_Open = null;
 	}
 	
 	//Coroutine that will detect when the Closing animation is finished and it will deactivate the
 	//hierarchy.
-	IEnumerator DisablePanelDeleyed(Animator anim)
+	IEnumerator DisablePanelDelayed(Animator anim)
 	{
 		bool closedStateReached = false;
 		bool wantToClose = true;

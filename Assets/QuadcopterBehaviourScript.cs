@@ -122,15 +122,43 @@ public class QuadcopterBehaviourScript : MonoBehaviour {
 		}
 	}
 
-	public void setAileronP(float Kp) {
-		pidAileron.Kp = Kp;
+	public float aileronP {
+		get { return pidAileron.Kp; }
+		set { pidAileron.Kp = value; }
 	}
-	public void setAileronI(float Ki) {
-		pidAileron.Ki = Ki;
+	public float aileronI {
+		get { return pidAileron.Ki; }
+		set { pidAileron.Ki = value; }
 	}
-	public void setAileronD(float Kd) {
-		pidAileron.Kd = Kd;
+	public float aileronD {
+		get { return pidAileron.Kd; }
+		set { pidAileron.Kd = value; }
 	}
+	public float elevatorP {
+		get { return pidElevator.Kp; }
+		set { pidElevator.Kp = value; }
+	}
+	public float elevatorI {
+		get { return pidElevator.Ki; }
+		set { pidElevator.Ki = value; }
+	}
+	public float elevatorD {
+		get { return pidElevator.Kd; }
+		set { pidElevator.Kd = value; }
+	}
+	public float rudderP {
+		get { return pidRudder.Kp; }
+		set { pidRudder.Kp = value; }
+	}
+	public float rudderI {
+		get { return pidRudder.Ki; }
+		set { pidRudder.Ki = value; }
+	}
+	public float rudderD {
+		get { return pidRudder.Kd; }
+		set { pidRudder.Kd = value; }
+	}
+	//TODO: imax too?
 	
 	void OnGUI() {
 		GUI.Label(textArea,"A: "+txRollAngle+" ("+rollAngle+")\n"
