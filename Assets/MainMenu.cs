@@ -12,11 +12,16 @@ public class MainMenu : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+		//wire up the start game button - need to do this first as we're about to take the menus out of the game hierarchy!
+		GameObject goStartGameButton = GameObject.Find("StartGameButton");
+		Button StartGameButton = goStartGameButton.GetComponent<Button> ();
+		StartGameButton.onClick.AddListener(StartGame);
+
+		//remove UI panels from game hierarchy until we make a request for them
 		_goMainMenu = GameObject.Find("MainMenuPanel");
 		_goMainMenu.SetActive (false);
 		_goPIDMenu = GameObject.Find ("PIDPanel");
 		_goPIDMenu.SetActive (false);
-	
 	}
 	
 	// Update is called once per frame
@@ -51,4 +56,14 @@ public class MainMenu : MonoBehaviour {
 
 	//void OnGUI() {
 	//}
+
+	//Start the game over again by reloading the level and resetting the timer to zero
+	public void StartGame() {
+		Application.LoadLevel(Application.loadedLevel); // reload the same level
+		GameObject goMainMenuCanvas = GameObject.Find("MainMenuCanvas");
+		//Script RaceTimerScript = goMainMenuCanvas.GetComponent<Script> ();
+		//RaceTimerScript script = (RaceTimerScript)goMainMenuCanvas.GetComponent (typeof(RaceTimerScript));
+		RaceTimerScript script = goMainMenuCanvas.GetComponent<RaceTimerScript> ();
+		script.ResetTimer ();
+	}
 }

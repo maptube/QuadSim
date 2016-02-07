@@ -294,4 +294,8 @@ public class QuadcopterBehaviourScript : MonoBehaviour {
 		rb.AddRelativeTorque (new Vector3 (Q, R, P));
 	}
 
+	//public void OnTriggerEnter(Collider other) {
+	//	Debug.Log ("Quadcopter COLLIDE");
+	//}
+
 }
