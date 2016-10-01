@@ -15,12 +15,16 @@ public class LookAtQuadcopter : MonoBehaviour {
 	//position of the person for 3rd person view mode
 	const float PersonX=0, PersonY=1.8f, PersonZ=0;
 
+    //position of the rear FPV camera relative to the quad position i.e. this far back from centre
+    //TODO: this should really come from the model in the scene as it could have been rescaled
+    Vector3 RearFPVOffset = new Vector3(0,0.3f,-1.5f); //z is position back (negative), y is position up (positive), x not used
+
 	//Viewpoint types:
 	//FPV is first person view with camera fixed on the front of the aircraft
 	//Gimbal is a hanging camera which is stabilised to be level with the ground at all times (no roll)
 	//3rdPerson is the normal RC viepoint of standing in the field looking at the aircraft in front of you
 	//TODO: add chase cam etc?
-	enum ViewpointType { vpFPV, vpGimbal, vp3rdPerson };
+	enum ViewpointType { vpFPV, vpRearFPV, vpGimbal, vp3rdPerson };
 
 	ViewpointType _ViewType = ViewpointType.vp3rdPerson; // ViewpointType.vpFPV;
 	ViewpointType ViewType
@@ -37,9 +41,10 @@ public class LookAtQuadcopter : MonoBehaviour {
 
 	string ViewpointText() {
 		switch (_ViewType) {
-		case ViewpointType.vpFPV: return "FPV";
-		case ViewpointType.vpGimbal: return "Gimbal";
-		case ViewpointType.vp3rdPerson: return "3rd Person";
+		    case ViewpointType.vpFPV: return "FPV";
+            case ViewpointType.vpRearFPV: return "Rear FPV";
+		    case ViewpointType.vpGimbal: return "Gimbal";
+		    case ViewpointType.vp3rdPerson: return "3rd Person";
 		}
 		return "Unknown";
 	}
@@ -47,15 +52,18 @@ public class LookAtQuadcopter : MonoBehaviour {
 	//Switches the view to the next one in the sequence.
 	public void ToggleViewpoint() {
 		switch (_ViewType) {
-		case ViewpointType.vpFPV:
-			_ViewType = ViewpointType.vpGimbal;
-			break;
-		case ViewpointType.vpGimbal:
-			_ViewType=ViewpointType.vp3rdPerson;
-			break;
-		case ViewpointType.vp3rdPerson:
-			_ViewType=ViewpointType.vpFPV;
-			break;
+		    case ViewpointType.vpFPV:
+			    _ViewType = ViewpointType.vpRearFPV;
+			    break;
+            case ViewpointType.vpRearFPV:
+                _ViewType = ViewpointType.vpGimbal;
+                break;   
+		    case ViewpointType.vpGimbal:
+			    _ViewType=ViewpointType.vp3rdPerson;
+			    break;
+		    case ViewpointType.vp3rdPerson:
+			    _ViewType=ViewpointType.vpFPV;
+			    break;
 		}
 		//and set the button text
 		GameObject but = GameObject.Find("ViewpointButton");
@@ -80,23 +88,28 @@ public class LookAtQuadcopter : MonoBehaviour {
 		GameObject quad = GameObject.Find (/*"testquadcopter2"*/"F450");
 
 		switch (_ViewType) {
-		case ViewpointType.vpFPV:
-			transform.position = quad.transform.position;
-			transform.rotation = quad.transform.rotation; //look straight out the front of the quad
-			transform.RotateAround(quad.transform.position,quad.transform.right,-20.0f); //FPV look up
-			//NO transform.RotateAround(transform.position, Vector3.right, 20.0f); //FPV look up
-			//transform.position=quad.transform.position;
-			//transform.forward = quad.transform.forward; //make view look out the front
-			//transform.up = quad.transform.up; //in this view, the camera is fixed to the frame and rolls with it
-			//transform.right = quad.transform.right;
+		    case ViewpointType.vpFPV:
+			    transform.position = quad.transform.position;
+			    transform.rotation = quad.transform.rotation; //look straight out the front of the quad
+			    transform.RotateAround(quad.transform.position,quad.transform.right,-20.0f); //FPV look up
+			    //NO transform.RotateAround(transform.position, Vector3.right, 20.0f); //FPV look up
+			    //transform.position=quad.transform.position;
+			    //transform.forward = quad.transform.forward; //make view look out the front
+			    //transform.up = quad.transform.up; //in this view, the camera is fixed to the frame and rolls with it
+			    //transform.right = quad.transform.right;
 			break;
-		case ViewpointType.vpGimbal:
-			transform.position=quad.transform.position;
-			transform.forward = quad.transform.forward; //make view look out the front (but no roll)
-			break;
-		case ViewpointType.vp3rdPerson:
-			transform.LookAt(quad.transform);
-			break;
+            case ViewpointType.vpRearFPV:
+                //same as vpFPV, but from behind the quad so you can see it in front of you
+                transform.position = quad.transform.position + (quad.transform.forward * RearFPVOffset.z) + (quad.transform.up*RearFPVOffset.y);
+                transform.rotation = quad.transform.rotation; //look straight out the front of the quad
+                break;
+		    case ViewpointType.vpGimbal:
+			    transform.position=quad.transform.position;
+			    transform.forward = quad.transform.forward; //make view look out the front (but no roll)
+			    break;
+		    case ViewpointType.vp3rdPerson:
+			    transform.LookAt(quad.transform);
+			    break;
 		}
 	}
 }
