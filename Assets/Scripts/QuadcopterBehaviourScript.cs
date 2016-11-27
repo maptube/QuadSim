@@ -105,9 +105,12 @@ public class QuadcopterBehaviourScript : MonoBehaviour {
     float MaxThrust = 10.0f; //Maximum thrust from all four motors - just set this rather than messing about with the motor constants above
 
     //Control Rates
-    const float AxisRateRoll = 45.0f; //this is how many degrees tilt you get for full stick deflection
-	const float AxisRatePitch = 45.0f;
-	const float AxisRateYaw = 4.0f;
+    const float AxisRateRoll = 25.0f; //this is how many degrees tilt you get for full stick deflection
+	const float AxisRatePitch = 25.0f;
+	const float AxisRateYaw = 2.0f;
+    const float ExpoRoll = 6f; //Y=X^6
+    const float ExpoPitch = 6f;
+    const float ExpoYaw = 6f;
 	//PID parameters	
 	const float PID_Aileron_P = 0.5f, PID_Aileron_I = 0.5f, PID_Aileron_D = 0.001f;
 	const float PID_Elevator_P = 0.5f, PID_Elevator_I = 0.5f, PID_Elevator_D = 0.001f;
@@ -252,7 +255,7 @@ public class QuadcopterBehaviourScript : MonoBehaviour {
 		// Change the mass of the object's Rigidbody.
 		rb.mass = this.Mass; //1.0f;
 		rb.drag = 0.4f; //was 0.8
-		rb.angularDrag = 3.5f; //0.0001f; //4.5f; //or inertiaTensor? what units is this in?
+        rb.angularDrag = 1.0f; // 3.5f; //0.0001f; //4.5f; //or inertiaTensor? what units is this in?
 		rb.centerOfMass = new Vector3 (0, 0, 0);
         //rb.inertiaTensor = new Vector3 (Ixx,Iyy,Izz); /*new Vector3 (1.0f,1.0f,1.0f);*/
 
@@ -274,6 +277,19 @@ public class QuadcopterBehaviourScript : MonoBehaviour {
 			ToggleAltHold ();
 		}
 	}
+
+    /// <summary>
+    /// Take a linear stick position and apply the relevant exponential to it.
+    /// </summary>
+    /// <param name="val"></param>
+    /// <param name="expo"></param>
+    /// <returns></returns>
+    float ApplyExpo(float val,float expo)
+    {
+        float Y = Mathf.Pow(Mathf.Abs(val), expo);
+        if (val < 0) Y = -1;
+        return Y;
+    }
 
 	//physics body pre-update
 	void FixedUpdate() {
@@ -306,7 +322,7 @@ public class QuadcopterBehaviourScript : MonoBehaviour {
 		//throttle = -SerialJoystickScript.Throttle;
 
 		//DirectInput joystick controller
-		//aileron = JoystickInputScript.aileron;
+		aileron = JoystickInputScript.aileron;
 
 		//Touch joystick for Android - NOTE, this is added to the scene as a JoystickGameObject with TXJoystick script attached, which is STATIC
 		//One stick, coupled ailerons and rudder, fixed throttle
@@ -319,8 +335,13 @@ public class QuadcopterBehaviourScript : MonoBehaviour {
 			if (elevator>0.1f) throttle=elevator*2.0f;
 		}
 
-		//Altitude hold controller - override the throttle
-		if (AltitudeHoldModeEnabled) {
+        //apply exponential settings to transmitter controls
+        //aileron = ApplyExpo(aileron, ExpoRoll); //Y=X^Expo, where Expo=1,2,3...
+        //elevator = ApplyExpo(elevator, ExpoPitch); //Y=X^Expo, where Expo=1,2,3...
+        //rudder = ApplyExpo(rudder, ExpoYaw); //Y=X^Expo, where Expo=1,2,3...
+
+        //Altitude hold controller - override the throttle
+        if (AltitudeHoldModeEnabled) {
 			throttle = pidAltitude.process(rb.position.y,AltitudeHold,Time.deltaTime);
 		}
 
