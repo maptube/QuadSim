@@ -293,8 +293,12 @@ public class QuadcopterBehaviourScript : MonoBehaviour {
 
 	//physics body pre-update
 	void FixedUpdate() {
-		//Axis system is defined as +Z forwards, +X right and +Y up
-		//Aileron rotation is Z, Elevator rotation is X and Rudder rotation is Y
+        //Axis system is defined as +Z forwards, +X right and +Y up
+        //Aileron rotation is Z, Elevator rotation is X and Rudder rotation is Y
+
+        //Component propellerM1 = GetComponent("PropellerM1");
+        GameObject propellerM1 = GameObject.Find("PropellerM1");
+        if (propellerM1 != null) propellerM1.transform.Rotate(new Vector3(0, 0, 1), 200.0f);
 
 		//user control inputs
 		//rudder = Input.GetAxis("Mouse X")-Screen.width/2;
@@ -302,7 +306,7 @@ public class QuadcopterBehaviourScript : MonoBehaviour {
 
 		aileron = 0; //(Input.mousePosition.x-Screen.width/2.0f)/Screen.width*2.0f; //todo: tidy formula
 		elevator = -(Input.mousePosition.y-Screen.height/2.0f)/Screen.height*2.0f;
-		rudder = (Input.mousePosition.x-Screen.width/2.0f)/Screen.width*2.0f;
+		//rudder = (Input.mousePosition.x-Screen.width/2.0f)/Screen.width*2.0f;
 		throttle = 0;
 
 		//TODO: need to check platform (Android touch controller), then if Windows, test for joystick (which one?), then fall back to mouse control
@@ -310,10 +314,10 @@ public class QuadcopterBehaviourScript : MonoBehaviour {
 		//joystick - the MAD CATZ has left stick Horizontal/Vertical, right stick Yaw/Throttle
 		//MadCatz has JoyAxis3=3rd Axis and JoyAxis4=4th Axis
 		//Speedlink NX has JoyAxis3=4th Axis and JoyAxis4=5th Axis
-		aileron = Input.GetAxis ("SpeedlinkAxisAileron"); //or "SpeedlinkAxisAileron" or "MadCatzAxisAileron" or "TaranisAileron"
-		elevator = Input.GetAxis ("SpeedlinkAxisElevator"); //or "MadCatzAxisElevator"
-		rudder = Input.GetAxis ("Horizontal");
-		throttle = Input.GetAxis ("Vertical"); //NOTE: +-1.0
+		aileron = Input.GetAxis ("TaranisAileron"); //or "SpeedlinkAxisAileron" or "MadCatzAxisAileron" or "TaranisAileron"
+		elevator = Input.GetAxis ("TaranisElevator"); //or "SpeedlinkAxisElevator" or "MadCatzAxisElevator"
+		rudder = Input.GetAxis ("TaranisRudder");
+		throttle = Input.GetAxis ("TaranisThrottle"); //NOTE: +-1.0
 
 		//serial joystick controller
 		//aileron = SerialJoystickScript.Aileron;
@@ -322,7 +326,7 @@ public class QuadcopterBehaviourScript : MonoBehaviour {
 		//throttle = -SerialJoystickScript.Throttle;
 
 		//DirectInput joystick controller
-		aileron = JoystickInputScript.aileron;
+		//aileron = JoystickInputScript.aileron;
 
 		//Touch joystick for Android - NOTE, this is added to the scene as a JoystickGameObject with TXJoystick script attached, which is STATIC
 		//One stick, coupled ailerons and rudder, fixed throttle
@@ -330,7 +334,7 @@ public class QuadcopterBehaviourScript : MonoBehaviour {
 		if (Application.platform == RuntimePlatform.Android) {
 			Vector2 v = TXJoystickScript.VJRnormals;
 			aileron = v.x / 4; //coupled rudder aileron
-			elevator = -v.y;
+			//elevator = -v.y;
 			rudder = v.x;
 			if (elevator>0.1f) throttle=elevator*2.0f;
 		}

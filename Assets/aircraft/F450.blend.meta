@@ -3,7 +3,7 @@ guid: 8dfde5475c54e8a43a8407de1596b2ca
 timeCreated: 1443468987
 licenseType: Free
 ModelImporter:
-  serializedVersion: 18
+  serializedVersion: 19
   fileIDToRecycleName:
     100000: ArmFoot
     100002: ArmFoot_001
@@ -25,6 +25,11 @@ ModelImporter:
     100034: Leg_002
     100036: Leg_003
     100038: ArmFoot_000
+    100040: Box001
+    100042: Box002
+    100044: Group001
+    100046: Torus001
+    100048: PropellerM1
     400000: ArmFoot
     400002: ArmFoot_001
     400004: ArmFoot_002
@@ -45,6 +50,11 @@ ModelImporter:
     400034: Leg_002
     400036: Leg_003
     400038: ArmFoot_000
+    400040: Box001
+    400042: Box002
+    400044: Group001
+    400046: Torus001
+    400048: PropellerM1
     2300000: ArmFoot
     2300002: ArmFoot_001
     2300004: ArmFoot_002
@@ -64,6 +74,9 @@ ModelImporter:
     2300032: Leg_002
     2300034: Leg_003
     2300036: ArmFoot_000
+    2300038: Box001
+    2300040: Box002
+    2300042: Torus001
     3300000: ArmFoot
     3300002: ArmFoot_001
     3300004: ArmFoot_002
@@ -83,6 +96,9 @@ ModelImporter:
     3300032: Leg_002
     3300034: Leg_003
     3300036: ArmFoot_000
+    3300038: Box001
+    3300040: Box002
+    3300042: Torus001
     4300000: PropDisk_002
     4300002: PropDisk_003
     4300004: PropDisk_001
@@ -102,6 +118,9 @@ ModelImporter:
     4300032: Leg_001
     4300034: Leg
     4300036: ArmFoot_000
+    4300038: Box001
+    4300040: Torus001
+    4300042: Box002
     7400000: Default Take
     9500000: //RootNode
   materials:
@@ -111,6 +130,7 @@ ModelImporter:
   animations:
     legacyGenerateAnimations: 4
     bakeSimulation: 0
+    resampleCurves: 1
     optimizeGameObjects: 0
     motionNodeName: 
     animationImportErrors: 
@@ -118,9 +138,9 @@ ModelImporter:
     animationRetargetingWarnings: 
     animationDoRetargetingWarnings: 0
     animationCompression: 1
-    animationRotationError: .5
-    animationPositionError: .5
-    animationScaleError: .5
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
     animationWrapMode: 0
     extraExposedTransformPaths: []
     clipAnimations: []
@@ -144,24 +164,25 @@ ModelImporter:
     useFileScale: 1
   tangentSpace:
     normalSmoothAngle: 60
-    splitTangentsAcrossUV: 1
     normalImportMode: 0
-    tangentImportMode: 1
+    tangentImportMode: 4
   importAnimation: 1
   copyAvatar: 0
   humanDescription:
     human: []
     skeleton: []
-    armTwist: .5
-    foreArmTwist: .5
-    upperLegTwist: .5
-    legTwist: .5
-    armStretch: .0500000007
-    legStretch: .0500000007
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
     feetSpacing: 0
     rootMotionBoneName: 
+    hasTranslationDoF: 0
   lastHumanDescriptionAvatarSource: {instanceID: 0}
   animationType: 2
+  humanoidOversampling: 1
   additionalBone: 0
   userData: 
   assetBundleName: 
