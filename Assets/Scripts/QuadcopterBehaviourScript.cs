@@ -296,9 +296,31 @@ public class QuadcopterBehaviourScript : MonoBehaviour {
         //Axis system is defined as +Z forwards, +X right and +Y up
         //Aileron rotation is Z, Elevator rotation is X and Rudder rotation is Y
 
-        //Component propellerM1 = GetComponent("PropellerM1");
-        GameObject propellerM1 = GameObject.Find("PropellerM1");
-        if (propellerM1 != null) propellerM1.transform.Rotate(new Vector3(0, 0, 1), 200.0f);
+        //motor orientation - note M1=rpm[0]
+        //M4 M2 (4 turns clockwise)
+        //M3 M1
+
+        //Propeller RPM values from throttle setting - used for visual animation of propeller disks
+        float[] propthrottle = new float[] { (throttle+1)/2, (throttle+1)/2, (throttle+1)/2, (throttle+1)/2 }; //as throttle = [-1..+1]
+        if (propthrottle[0] > 0) //if the throttle's at zero, then don't spin any props
+        {
+            propthrottle[0] = propthrottle[0] - aileron * 0.5f - elevator * 0.5f;
+            propthrottle[1] = propthrottle[1] - aileron * 0.5f + elevator * 0.5f;
+            propthrottle[2] = propthrottle[2] + aileron * 0.5f - elevator * 0.5f;
+            propthrottle[3] = propthrottle[3] + aileron * 0.5f + elevator * 0.5f;
+        }
+        for (int i = 0; i < 4; i++)
+        {
+            //Component propellerM1 = GetComponent("PropellerM1");
+            GameObject propellerM = GameObject.Find("PropellerM"+(i+1)); //PropellerM1, M2, M3,M4
+            if (propellerM != null)
+            {
+                float rpm = 0;
+                if (propthrottle[i] > 0.0f) { rpm = propthrottle[i] * 10.0f + 40.0f; }
+                if (rpm > 80.0f) { rpm = 80.0f; }
+                propellerM.transform.Rotate(new Vector3(0, 0, 1), rpm);
+            }
+        }
 
 		//user control inputs
 		//rudder = Input.GetAxis("Mouse X")-Screen.width/2;

@@ -30,6 +30,7 @@ ModelImporter:
     100044: Group001
     100046: Torus001
     100048: PropellerM1
+    100050: PropellerM3
     400000: ArmFoot
     400002: ArmFoot_001
     400004: ArmFoot_002
@@ -55,6 +56,7 @@ ModelImporter:
     400044: Group001
     400046: Torus001
     400048: PropellerM1
+    400050: PropellerM3
     2300000: ArmFoot
     2300002: ArmFoot_001
     2300004: ArmFoot_002
@@ -77,6 +79,8 @@ ModelImporter:
     2300038: Box001
     2300040: Box002
     2300042: Torus001
+    2300044: PropellerM1
+    2300046: PropellerM3
     3300000: ArmFoot
     3300002: ArmFoot_001
     3300004: ArmFoot_002
@@ -99,6 +103,8 @@ ModelImporter:
     3300038: Box001
     3300040: Box002
     3300042: Torus001
+    3300044: PropellerM1
+    3300046: PropellerM3
     4300000: PropDisk_002
     4300002: PropDisk_003
     4300004: PropDisk_001
@@ -121,6 +127,8 @@ ModelImporter:
     4300038: Box001
     4300040: Torus001
     4300042: Box002
+    4300044: PropellerM1
+    4300046: PropellerM3
     7400000: Default Take
     9500000: //RootNode
   materials:
@@ -169,6 +177,7 @@ ModelImporter:
   importAnimation: 1
   copyAvatar: 0
   humanDescription:
+    serializedVersion: 2
     human: []
     skeleton: []
     armTwist: 0.5
@@ -179,7 +188,10 @@ ModelImporter:
     legStretch: 0.05
     feetSpacing: 0
     rootMotionBoneName: 
+    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
     hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 0
   lastHumanDescriptionAvatarSource: {instanceID: 0}
   animationType: 2
   humanoidOversampling: 1
