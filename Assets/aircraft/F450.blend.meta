@@ -31,6 +31,10 @@ ModelImporter:
     100046: Torus001
     100048: PropellerM1
     100050: PropellerM3
+    100052: Arm_000
+    100054: Arm_001
+    100056: Arm_002
+    100058: Arm_003
     400000: ArmFoot
     400002: ArmFoot_001
     400004: ArmFoot_002
@@ -57,6 +61,10 @@ ModelImporter:
     400046: Torus001
     400048: PropellerM1
     400050: PropellerM3
+    400052: Arm_000
+    400054: Arm_001
+    400056: Arm_002
+    400058: Arm_003
     2300000: ArmFoot
     2300002: ArmFoot_001
     2300004: ArmFoot_002
@@ -81,6 +89,10 @@ ModelImporter:
     2300042: Torus001
     2300044: PropellerM1
     2300046: PropellerM3
+    2300048: Arm_000
+    2300050: Arm_001
+    2300052: Arm_002
+    2300054: Arm_003
     3300000: ArmFoot
     3300002: ArmFoot_001
     3300004: ArmFoot_002
@@ -105,6 +117,10 @@ ModelImporter:
     3300042: Torus001
     3300044: PropellerM1
     3300046: PropellerM3
+    3300048: Arm_000
+    3300050: Arm_001
+    3300052: Arm_002
+    3300054: Arm_003
     4300000: PropDisk_002
     4300002: PropDisk_003
     4300004: PropDisk_001
@@ -129,6 +145,10 @@ ModelImporter:
     4300042: Box002
     4300044: PropellerM1
     4300046: PropellerM3
+    4300048: Arm_003
+    4300050: Arm_002
+    4300052: Arm_001
+    4300054: Arm_000
     7400000: Default Take
     9500000: //RootNode
   materials:
