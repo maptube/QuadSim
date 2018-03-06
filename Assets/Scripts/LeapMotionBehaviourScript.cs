@@ -14,6 +14,24 @@ using Leap;
 /// </summary>
 public class SampleListener
 {
+    //hand information to feed back - this gets turned into control inputs later
+    //ALL IN RADIANS
+    float _handRoll;
+    public float handRoll {
+        get { return _handRoll; }
+    }
+
+    float _handPitch;
+    public float handPitch
+    {
+        get { return _handPitch; }
+    }
+
+    float _handYaw;
+    public float handYaw {
+        get { return _handYaw; }
+    }
+
     public void OnServiceConnect(object sender, ConnectionEventArgs args)
     {
         //Console.WriteLine("Service Connected");
@@ -31,26 +49,38 @@ public class SampleListener
         // Get the most recent frame and report some basic information
         Frame frame = args.frame;
 
-        Console.WriteLine(
-          "Frame id: {0}, timestamp: {1}, hands: {2}",
-          frame.Id, frame.Timestamp, frame.Hands.Count
-        );
+        //debug info from the hello world example in the sdk
+        //Debug.Log(string.Format("LeapMotion: Frame id: {0}, timestamp: {1}, hands: {2}",frame.Id, frame.Timestamp, frame.Hands.Count));
+        //foreach (Hand hand in frame.Hands)
+        //{
+        //    Debug.Log(string.Format("LeapMotion: Hand id: {0}, palm position: {1}, fingers: {2}",hand.Id, hand.PalmPosition, hand.Fingers.Count));
+        //    // Get the hand's normal vector and direction
+        //    Vector normal = hand.PalmNormal;
+        //    Vector direction = hand.Direction;
+
+        //    // Calculate the hand's pitch, roll, and yaw angles
+        //    Debug.Log(
+        //        string.Format("LeapMotion: Hand pitch: {0} degrees, roll: {1} degrees, yaw: {2} degrees",
+        //            direction.Pitch * 180.0f / Mathf.PI,
+        //            normal.Roll * 180.0f / Mathf.PI,
+        //            direction.Yaw * 180.0f / Mathf.PI
+        //        )
+        //    );
+        //}
+
+        //real code
+        //which hand???? how is this going to work?
         foreach (Hand hand in frame.Hands)
         {
-            Console.WriteLine("  Hand id: {0}, palm position: {1}, fingers: {2}",
-              hand.Id, hand.PalmPosition, hand.Fingers.Count);
-            // Get the hand's normal vector and direction
+            //hand.IsRight or IsLeft?
             Vector normal = hand.PalmNormal;
             Vector direction = hand.Direction;
-
-            // Calculate the hand's pitch, roll, and yaw angles
-            Console.WriteLine(
-              "  Hand pitch: {0} degrees, roll: {1} degrees, yaw: {2} degrees",
-              direction.Pitch * 180.0f / (float)Math.PI,
-              normal.Roll * 180.0f / (float)Math.PI,
-              direction.Yaw * 180.0f / (float)Math.PI
-            );
+            _handPitch = direction.Pitch; // * 180.0f / Mathf.PI;
+            _handRoll = normal.Roll; // * 180.0f / Mathf.PI;
+            _handYaw = direction.Yaw; // * 180.0f / Mathf.PI;
         }
+
+
     }
 }
 
@@ -65,6 +95,8 @@ public class LeapMotionBehaviourScript : MonoBehaviour {
     public static Controller leapController;
     public static SampleListener leapListener;
 
+    #region UnityMethods
+
     // Use this for initialization
     void Start () {
         leapController = new Controller();
@@ -73,6 +105,7 @@ public class LeapMotionBehaviourScript : MonoBehaviour {
         leapController.Connect += leapListener.OnServiceConnect;
         leapController.Device += leapListener.OnConnect;
         leapController.FrameReady += leapListener.OnFrame;
+        
     }
 
     //cleanup code - where????
@@ -83,4 +116,32 @@ public class LeapMotionBehaviourScript : MonoBehaviour {
 	void Update () {
 		
 	}
+
+    #endregion UnityMethods
+
+    #region Methods
+
+    /// <summary>
+    /// Return control inputs (aileron, elevator, rudder, throttle) based on latest hand position from the LeapMotion controller.
+    /// This procedure contains all the logic to map the hand(s?) position to the control inputs.
+    /// </summary>
+    /// <param name="Aileron"></param>
+    /// <param name="Elevator"></param>
+    /// <param name="Rudder"></param>
+    /// <param name="Throttle"></param>
+    public static void GetControlInputs(out float Aileron, out float Elevator, out float Rudder, out float Throttle)
+    {
+        //NOTE: aileron, elevator, rudder are -1..+1, while throttle is 0..1
+        Aileron = 0;
+        Elevator = 0;
+        Rudder = 0;
+        Throttle = 0;
+
+        //use the values last seen by the leap listener event handler object
+        Aileron = leapListener.handRoll;
+    }
+
+    #endregion Methods
+
+
 }

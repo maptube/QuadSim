@@ -333,22 +333,29 @@ public class QuadcopterBehaviourScript : MonoBehaviour {
 
 		//TODO: need to check platform (Android touch controller), then if Windows, test for joystick (which one?), then fall back to mouse control
 
+        //this is the live control block
 		//joystick - the MAD CATZ has left stick Horizontal/Vertical, right stick Yaw/Throttle
 		//MadCatz has JoyAxis3=3rd Axis and JoyAxis4=4th Axis
 		//Speedlink NX has JoyAxis3=4th Axis and JoyAxis4=5th Axis
-		aileron = Input.GetAxis ("TaranisAileron"); //or "SpeedlinkAxisAileron" or "MadCatzAxisAileron" or "TaranisAileron"
-		elevator = Input.GetAxis ("TaranisElevator"); //or "SpeedlinkAxisElevator" or "MadCatzAxisElevator"
-		rudder = Input.GetAxis ("TaranisRudder");
-		throttle = Input.GetAxis ("TaranisThrottle"); //NOTE: +-1.0
+		//aileron = Input.GetAxis ("TaranisAileron"); //or "SpeedlinkAxisAileron" or "MadCatzAxisAileron" or "TaranisAileron"
+		//elevator = Input.GetAxis ("TaranisElevator"); //or "SpeedlinkAxisElevator" or "MadCatzAxisElevator"
+		//rudder = Input.GetAxis ("TaranisRudder");
+		//throttle = Input.GetAxis ("TaranisThrottle"); //NOTE: +-1.0
 
-		//serial joystick controller
-		//aileron = SerialJoystickScript.Aileron;
-		//elevator = SerialJoystickScript.Elevator;
-		//rudder = SerialJoystickScript.Rudder;
-		//throttle = -SerialJoystickScript.Throttle;
+        //serial joystick controller
+        //aileron = SerialJoystickScript.Aileron;
+        //elevator = SerialJoystickScript.Elevator;
+        //rudder = SerialJoystickScript.Rudder;
+        //throttle = -SerialJoystickScript.Throttle;
 
-		//DirectInput joystick controller
-		//aileron = JoystickInputScript.aileron;
+        //DirectInput joystick controller
+        //aileron = JoystickInputScript.aileron;
+
+        //LeapMotion Joystick
+        LeapMotionBehaviourScript.GetControlInputs(out aileron, out elevator, out rudder, out throttle);
+        elevator = 0;
+        rudder = 0;
+        throttle = 0;
 
 		//Touch joystick for Android - NOTE, this is added to the scene as a JoystickGameObject with TXJoystick script attached, which is STATIC
 		//One stick, coupled ailerons and rudder, fixed throttle
