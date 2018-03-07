@@ -14,7 +14,23 @@ using Leap;
 /// </summary>
 public class SampleListener
 {
+
     //hand information to feed back - this gets turned into control inputs later
+    /// <summary>
+    /// Hand confidence of highest hand
+    /// </summary>
+    float _handConfidence;
+    public float handConfidence
+    {
+        get { return _handConfidence;  }
+    }
+
+    int _numFingers;
+    public int numFingers
+    {
+        get { return _numFingers; }
+    }
+
     //ALL IN RADIANS
     float _handRoll;
     public float handRoll {
@@ -30,6 +46,18 @@ public class SampleListener
     float _handYaw;
     public float handYaw {
         get { return _handYaw; }
+    }
+
+    Leap.Vector _palmPosition;
+    public Leap.Vector palmPosition
+    {
+        get { return _palmPosition; }
+    }
+
+    Leap.Vector _palmVelocity;
+    public Leap.Vector palmVelocity
+    {
+        get { return _palmVelocity; }
     }
 
     public void OnServiceConnect(object sender, ConnectionEventArgs args)
@@ -70,18 +98,31 @@ public class SampleListener
 
         //real code
         //which hand???? how is this going to work?
-        foreach (Hand hand in frame.Hands)
+        //todo: should track the hand id between successive frames
+        Hand hand = null;
+        _handConfidence = 0;
+        foreach (Hand h in frame.Hands) //find hand with the best confidence - we don't care which one
         {
-            //hand.IsRight or IsLeft?
+            if (h.Confidence > _handConfidence)
+            {
+                hand = h;
+                _handConfidence = h.Confidence;
+            }
+        }
+        if (hand!=null)
+        {
+            _numFingers = hand.Fingers.Count;
             Vector normal = hand.PalmNormal;
             Vector direction = hand.Direction;
             _handPitch = direction.Pitch; // * 180.0f / Mathf.PI;
             _handRoll = normal.Roll; // * 180.0f / Mathf.PI;
             _handYaw = direction.Yaw; // * 180.0f / Mathf.PI;
+            _palmPosition = hand.PalmPosition;
+            _palmVelocity = hand.PalmVelocity; //NOTE: this is a Leap.Vector not a Unity one
         }
 
-
     }
+
 }
 
 /// <summary>
@@ -90,7 +131,12 @@ public class SampleListener
 /// NOTE: might have to add some cleverness with auto throttle control and target translation and angles - leap isn't as sensitive as a radio tx.
 /// </summary>
 public class LeapMotionBehaviourScript : MonoBehaviour {
-    
+
+    /// <summary>
+    /// Hand confidence thresholds below this are discarded and result in null control inputs (a=0,e=0,r=0)
+    /// </summary>
+    public const float confidenceThreshold = 0.5f;
+
 
     public static Controller leapController;
     public static SampleListener leapListener;
@@ -108,12 +154,17 @@ public class LeapMotionBehaviourScript : MonoBehaviour {
         
     }
 
-    //cleanup code - where????
-    //controller.RemoveListener (listener);
-    //controller.Dispose ();
-	
-	// Update is called once per frame
-	void Update () {
+    void OnDestroy()
+    {
+        //cleanup code - you need to do this, otherwise it locks up Unity conpletely on disconnect
+        //leapController.RemoveListener(leapListener); //this was in the api instructions, but it's been removed
+        leapController.StopConnection();
+        leapController.Dispose();
+    }
+
+
+    // Update is called once per frame
+    void Update () {
 		
 	}
 
@@ -122,6 +173,7 @@ public class LeapMotionBehaviourScript : MonoBehaviour {
     #region Methods
 
     /// <summary>
+    /// Poll function for current LeapMontion controller status.
     /// Return control inputs (aileron, elevator, rudder, throttle) based on latest hand position from the LeapMotion controller.
     /// This procedure contains all the logic to map the hand(s?) position to the control inputs.
     /// </summary>
@@ -138,7 +190,24 @@ public class LeapMotionBehaviourScript : MonoBehaviour {
         Throttle = 0;
 
         //use the values last seen by the leap listener event handler object
-        Aileron = leapListener.handRoll;
+        //Debug.Log("confidence: " + leapListener.handConfidence);
+        if (leapListener.handConfidence > confidenceThreshold)
+        {
+            if (leapListener.numFingers > 2) //if we're seeing less than two fingers, then assume the hand is a fist and don't read it
+            {
+                Aileron = -leapListener.handRoll;
+                Elevator = leapListener.handPitch;
+                //if (leapListener.palmVelocity.y>10)
+                //{
+                //    Throttle = 10;
+                //}
+                //else if (leapListener.palmVelocity.y<10)
+                //{
+                //    Throttle = -10;
+                //}
+                Throttle = leapListener.palmPosition.y;
+            }
+        }
     }
 
     #endregion Methods

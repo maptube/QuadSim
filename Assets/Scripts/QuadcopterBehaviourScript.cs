@@ -331,16 +331,17 @@ public class QuadcopterBehaviourScript : MonoBehaviour {
 		//rudder = (Input.mousePosition.x-Screen.width/2.0f)/Screen.width*2.0f;
 		throttle = 0;
 
-		//TODO: need to check platform (Android touch controller), then if Windows, test for joystick (which one?), then fall back to mouse control
+
+        //TODO: need to check platform (Android touch controller), then if Windows, test for joystick (which one?), then fall back to mouse control
 
         //this is the live control block
-		//joystick - the MAD CATZ has left stick Horizontal/Vertical, right stick Yaw/Throttle
-		//MadCatz has JoyAxis3=3rd Axis and JoyAxis4=4th Axis
-		//Speedlink NX has JoyAxis3=4th Axis and JoyAxis4=5th Axis
-		//aileron = Input.GetAxis ("TaranisAileron"); //or "SpeedlinkAxisAileron" or "MadCatzAxisAileron" or "TaranisAileron"
-		//elevator = Input.GetAxis ("TaranisElevator"); //or "SpeedlinkAxisElevator" or "MadCatzAxisElevator"
-		//rudder = Input.GetAxis ("TaranisRudder");
-		//throttle = Input.GetAxis ("TaranisThrottle"); //NOTE: +-1.0
+        //joystick - the MAD CATZ has left stick Horizontal/Vertical, right stick Yaw/Throttle
+        //MadCatz has JoyAxis3=3rd Axis and JoyAxis4=4th Axis
+        //Speedlink NX has JoyAxis3=4th Axis and JoyAxis4=5th Axis
+        //aileron = Input.GetAxis ("TaranisAileron"); //or "SpeedlinkAxisAileron" or "MadCatzAxisAileron" or "TaranisAileron"
+        //elevator = Input.GetAxis ("TaranisElevator"); //or "SpeedlinkAxisElevator" or "MadCatzAxisElevator"
+        //rudder = Input.GetAxis ("TaranisRudder");
+        //throttle = Input.GetAxis ("TaranisThrottle"); //NOTE: +-1.0
 
         //serial joystick controller
         //aileron = SerialJoystickScript.Aileron;
@@ -353,14 +354,19 @@ public class QuadcopterBehaviourScript : MonoBehaviour {
 
         //LeapMotion Joystick
         LeapMotionBehaviourScript.GetControlInputs(out aileron, out elevator, out rudder, out throttle);
-        elevator = 0;
+        //elevator = 0;
         rudder = 0;
-        throttle = 0;
+        //throttle = 0;
+        //if (throttle > 0) AltitudeHold += 0.1f; //throttle not really throttle - it's a delta height
+        //if (throttle < 0) AltitudeHold -= 0.1f;
+        AltitudeHold = throttle/100.0f; //take direct height from hand
+        if (AltitudeHold < 0) AltitudeHold = 0;
+        if (!AltitudeHoldModeEnabled) ToggleAltHold(); //keep altitude hold mode on in LeapMotion joystick mode
 
-		//Touch joystick for Android - NOTE, this is added to the scene as a JoystickGameObject with TXJoystick script attached, which is STATIC
-		//One stick, coupled ailerons and rudder, fixed throttle
-		//Vector2 v = TXJoystickScript.VJRvector;
-		if (Application.platform == RuntimePlatform.Android) {
+        //Touch joystick for Android - NOTE, this is added to the scene as a JoystickGameObject with TXJoystick script attached, which is STATIC
+        //One stick, coupled ailerons and rudder, fixed throttle
+        //Vector2 v = TXJoystickScript.VJRvector;
+        if (Application.platform == RuntimePlatform.Android) {
 			Vector2 v = TXJoystickScript.VJRnormals;
 			aileron = v.x / 4; //coupled rudder aileron
 			//elevator = -v.y;
