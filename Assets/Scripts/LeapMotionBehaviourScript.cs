@@ -205,7 +205,11 @@ public class LeapMotionBehaviourScript : MonoBehaviour {
                 //{
                 //    Throttle = -10;
                 //}
-                Throttle = leapListener.palmPosition.y;
+
+                //palm height seems to vary between 70 and 500 (mm from sensor?)
+                Throttle = (leapListener.palmPosition.y-70)/500;
+                if (Throttle < 0) Throttle = 0;
+                else if (Throttle > 1) Throttle = 1;
             }
         }
     }

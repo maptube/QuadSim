@@ -141,7 +141,7 @@ public class QuadcopterBehaviourScript : MonoBehaviour {
 	PIDController pidAileron = new PIDController (PID_Aileron_P,PID_Aileron_I,PID_Aileron_D,5.0f);
 	PIDController pidElevator = new PIDController (PID_Elevator_P,PID_Elevator_I,PID_Elevator_D,5.0f);
 	PIDController pidRudder = new PIDController(PID_Rudder_P,PID_Rudder_I,PID_Rudder_D,5.0f);
-	PIDController pidAltitude = new PIDController (0.8f, 0.01f, 0, 5.0f);
+	PIDController pidAltitude = new PIDController(0.05f, 0.025f, 0.0f, 1.0f); //original new PIDController (0.8f, 0.01f, 0, 5.0f);
 	
 
 	bool AltitudeHoldModeEnabled = false;
@@ -245,6 +245,7 @@ public class QuadcopterBehaviourScript : MonoBehaviour {
 		           +"YawRateTarget: "+rudder*AxisRateYaw+" GyroRate: "+gyroRates.z+"\n"
 		           +"gyroRates: "+gyroRates.x.ToString ("N2")+" "+gyroRates.y.ToString ("N2")+" "+gyroRates.z.ToString ("N2")+"\n"
                    +"thrust: "+Thrust+"\n"
+                   +"AltHold: "+AltitudeHold+"\n"
 		);
 	}
 
@@ -357,11 +358,18 @@ public class QuadcopterBehaviourScript : MonoBehaviour {
         //elevator = 0;
         rudder = 0;
         //throttle = 0;
+        //NOTE: throttle = 0..1
+        if (!AltitudeHoldModeEnabled) ToggleAltHold(); //keep altitude hold mode on in LeapMotion joystick mode
         //if (throttle > 0) AltitudeHold += 0.1f; //throttle not really throttle - it's a delta height
         //if (throttle < 0) AltitudeHold -= 0.1f;
-        AltitudeHold = throttle/100.0f; //take direct height from hand
+        float dy = (throttle-0.2f)*20.0f - AltitudeHold; //direct height (throttle) minus alt hold height to get delta height i.e. we want to go up or down an amount
+        if (dy > 10) dy = 10;
+        else if (dy < -10) dy = -10;
+        AltitudeHold += dy; //take direct height from hand (throttle), subtract alt hold height and add a fraction on to alt hold - move up or down based on height difference
         if (AltitudeHold < 0) AltitudeHold = 0;
-        if (!AltitudeHoldModeEnabled) ToggleAltHold(); //keep altitude hold mode on in LeapMotion joystick mode
+        if (AltitudeHold > 100) AltitudeHold = 100;
+        //Debug.Log(AltitudeHold+" "+dy+" "+throttle);
+        //throttle = throttle * 2.0f - 1.0f; //convert 0..1 to -1..1
 
         //Touch joystick for Android - NOTE, this is added to the scene as a JoystickGameObject with TXJoystick script attached, which is STATIC
         //One stick, coupled ailerons and rudder, fixed throttle
