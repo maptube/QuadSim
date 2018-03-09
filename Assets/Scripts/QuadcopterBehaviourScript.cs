@@ -141,7 +141,7 @@ public class QuadcopterBehaviourScript : MonoBehaviour {
 	PIDController pidAileron = new PIDController (PID_Aileron_P,PID_Aileron_I,PID_Aileron_D,5.0f);
 	PIDController pidElevator = new PIDController (PID_Elevator_P,PID_Elevator_I,PID_Elevator_D,5.0f);
 	PIDController pidRudder = new PIDController(PID_Rudder_P,PID_Rudder_I,PID_Rudder_D,5.0f);
-	PIDController pidAltitude = new PIDController(0.05f, 0.025f, 0.0f, 1.0f); //original new PIDController (0.8f, 0.01f, 0, 5.0f);
+	PIDController pidAltitude = new PIDController(0.8f, 0.01f, 0.0f, 1.0f); //original new PIDController (0.8f, 0.01f, 0, 5.0f);
 	
 
 	bool AltitudeHoldModeEnabled = false;
@@ -362,9 +362,9 @@ public class QuadcopterBehaviourScript : MonoBehaviour {
         if (!AltitudeHoldModeEnabled) ToggleAltHold(); //keep altitude hold mode on in LeapMotion joystick mode
         //if (throttle > 0) AltitudeHold += 0.1f; //throttle not really throttle - it's a delta height
         //if (throttle < 0) AltitudeHold -= 0.1f;
-        float dy = (throttle-0.2f)*20.0f - AltitudeHold; //direct height (throttle) minus alt hold height to get delta height i.e. we want to go up or down an amount
-        if (dy > 10) dy = 10;
-        else if (dy < -10) dy = -10;
+        float dy = (throttle-0.2f)*0.1f; //direct height (throttle) minus alt hold height to get delta height i.e. we want to go up or down an amount
+        if (dy > 2) dy = 2;
+        else if (dy < -2) dy = -2;
         AltitudeHold += dy; //take direct height from hand (throttle), subtract alt hold height and add a fraction on to alt hold - move up or down based on height difference
         if (AltitudeHold < 0) AltitudeHold = 0;
         if (AltitudeHold > 100) AltitudeHold = 100;
