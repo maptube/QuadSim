@@ -339,10 +339,10 @@ public class QuadcopterBehaviourScript : MonoBehaviour {
         //joystick - the MAD CATZ has left stick Horizontal/Vertical, right stick Yaw/Throttle
         //MadCatz has JoyAxis3=3rd Axis and JoyAxis4=4th Axis
         //Speedlink NX has JoyAxis3=4th Axis and JoyAxis4=5th Axis
-        //aileron = Input.GetAxis ("TaranisAileron"); //or "SpeedlinkAxisAileron" or "MadCatzAxisAileron" or "TaranisAileron"
-        //elevator = Input.GetAxis ("TaranisElevator"); //or "SpeedlinkAxisElevator" or "MadCatzAxisElevator"
-        //rudder = Input.GetAxis ("TaranisRudder");
-        //throttle = Input.GetAxis ("TaranisThrottle"); //NOTE: +-1.0
+        //aileron = Input.GetAxis ("SpeedlinkAxisAileron"); //or "SpeedlinkAxisAileron" or "MadCatzAxisAileron" or "TaranisAileron"
+        //elevator = Input.GetAxis ("SpeedlinkAxisElevator"); //or "SpeedlinkAxisElevator" or "MadCatzAxisElevator"
+        //rudder = Input.GetAxis ("Horizontal"); //Horizontal, TaranisRudder
+        //throttle = Input.GetAxis ("Vertical"); //NOTE: +-1.0 Vertical, TaranisThrottle
 
         //serial joystick controller
         //aileron = SerialJoystickScript.Aileron;
@@ -355,9 +355,7 @@ public class QuadcopterBehaviourScript : MonoBehaviour {
 
         //LeapMotion Joystick
         LeapMotionBehaviourScript.GetControlInputs(out aileron, out elevator, out rudder, out throttle);
-        //elevator = 0;
-        rudder = 0;
-        //throttle = 0;
+        rudder = aileron * 0.25f; //coupled aileron rudder CAR
         //NOTE: throttle = 0..1
         if (!AltitudeHoldModeEnabled) ToggleAltHold(); //keep altitude hold mode on in LeapMotion joystick mode
         //if (throttle > 0) AltitudeHold += 0.1f; //throttle not really throttle - it's a delta height

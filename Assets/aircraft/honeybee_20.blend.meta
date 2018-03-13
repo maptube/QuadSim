@@ -1,0 +1,204 @@
+fileFormatVersion: 2
+guid: eba904301ce8ca846b0a81b9816c4327
+timeCreated: 1520936134
+licenseType: Free
+ModelImporter:
+  serializedVersion: 19
+  fileIDToRecycleName:
+    100000: Abdomen2
+    100002: Antenna
+    100004: AntennaCircle
+    100006: BottomWing
+    100008: Eye
+    100010: FlightController
+    100012: HeadThorax
+    100014: //RootNode
+    100016: Leg1
+    100018: Leg1Foot
+    100020: Leg2
+    100022: Leg2Foot
+    100024: Leg3
+    100026: Leg3Foot
+    100028: MotorBL
+    100030: MotorFL
+    100032: RearMotorSupport
+    100034: Sting
+    100036: StingRound
+    100038: Strake
+    100040: ThoraxCentre
+    100042: TopWing
+    100044: WingBridge
+    100046: XPropDisk
+    100048: XPropDisk2
+    100050: ZigZags
+    400000: Abdomen2
+    400002: Antenna
+    400004: AntennaCircle
+    400006: BottomWing
+    400008: Eye
+    400010: FlightController
+    400012: HeadThorax
+    400014: //RootNode
+    400016: Leg1
+    400018: Leg1Foot
+    400020: Leg2
+    400022: Leg2Foot
+    400024: Leg3
+    400026: Leg3Foot
+    400028: MotorBL
+    400030: MotorFL
+    400032: RearMotorSupport
+    400034: Sting
+    400036: StingRound
+    400038: Strake
+    400040: ThoraxCentre
+    400042: TopWing
+    400044: WingBridge
+    400046: XPropDisk
+    400048: XPropDisk2
+    400050: ZigZags
+    2300000: Abdomen2
+    2300002: Antenna
+    2300004: AntennaCircle
+    2300006: BottomWing
+    2300008: Eye
+    2300010: FlightController
+    2300012: HeadThorax
+    2300014: Leg1
+    2300016: Leg1Foot
+    2300018: Leg2
+    2300020: Leg2Foot
+    2300022: Leg3
+    2300024: Leg3Foot
+    2300026: MotorBL
+    2300028: MotorFL
+    2300030: RearMotorSupport
+    2300032: Sting
+    2300034: StingRound
+    2300036: Strake
+    2300038: ThoraxCentre
+    2300040: TopWing
+    2300042: WingBridge
+    2300044: XPropDisk
+    2300046: XPropDisk2
+    2300048: ZigZags
+    3300000: Abdomen2
+    3300002: Antenna
+    3300004: AntennaCircle
+    3300006: BottomWing
+    3300008: Eye
+    3300010: FlightController
+    3300012: HeadThorax
+    3300014: Leg1
+    3300016: Leg1Foot
+    3300018: Leg2
+    3300020: Leg2Foot
+    3300022: Leg3
+    3300024: Leg3Foot
+    3300026: MotorBL
+    3300028: MotorFL
+    3300030: RearMotorSupport
+    3300032: Sting
+    3300034: StingRound
+    3300036: Strake
+    3300038: ThoraxCentre
+    3300040: TopWing
+    3300042: WingBridge
+    3300044: XPropDisk
+    3300046: XPropDisk2
+    3300048: ZigZags
+    4300000: FlightController
+    4300002: StingRound
+    4300004: XPropDisk
+    4300006: Abdomen2
+    4300008: Sting
+    4300010: HeadThorax
+    4300012: Eye
+    4300014: Strake
+    4300016: AntennaCircle
+    4300018: Antenna
+    4300020: RearMotorSupport
+    4300022: ThoraxCentre
+    4300024: WingBridge
+    4300026: Leg3
+    4300028: MotorBL
+    4300030: MotorFL
+    4300032: TopWing
+    4300034: BottomWing
+    4300036: Leg3Foot
+    4300038: Leg2Foot
+    4300040: Leg2
+    4300042: Leg1
+    4300044: Leg1Foot
+    4300046: ZigZags
+    4300048: XPropDisk2
+    7400000: Default Take
+    9500000: //RootNode
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
