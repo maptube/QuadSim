@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System;
 using System.Collections;
-using System.IO.Ports;
+//using System.IO.Ports;
 
 /// <summary>
 /// Serial joystick script.
@@ -12,7 +12,7 @@ public class SerialJoystickScript : MonoBehaviour {
 
 	public const string PortName = "COM3";
 
-	private static SerialPort sp=null;
+//	private static SerialPort sp=null;
 
 	public static float Aileron = 0.0f;
 	public static float Elevator = 0.0f;
@@ -21,74 +21,74 @@ public class SerialJoystickScript : MonoBehaviour {
 
 	// Use this for initialization
 	public void Start () {
-		string[] portNames = System.IO.Ports.SerialPort.GetPortNames ();
-		foreach (string name in portNames) print (name);
+		//string[] portNames = System.IO.Ports.SerialPort.GetPortNames ();
+		//foreach (string name in portNames) print (name);
 
-		sp = new SerialPort (PortName);
+		//sp = new SerialPort (PortName);
 
-		sp.BaudRate = 9600;
-		sp.Parity = Parity.None;
-		sp.StopBits = StopBits.One;
-		sp.DataBits = 8;
-		sp.Handshake = Handshake.None;
-		sp.RtsEnable = true;
+		//sp.BaudRate = 9600;
+		//sp.Parity = Parity.None;
+		//sp.StopBits = StopBits.One;
+		//sp.DataBits = 8;
+		//sp.Handshake = Handshake.None;
+		//sp.RtsEnable = true;
 		
-		//sp.DataReceived += new SerialDataReceivedEventHandler(DataReceivedHandler);
+		////sp.DataReceived += new SerialDataReceivedEventHandler(DataReceivedHandler);
 		
-		sp.Open();
-		print ("Serial port open = "+sp.IsOpen);
+		//sp.Open();
+		//print ("Serial port open = "+sp.IsOpen);
 
 	}
 
 	//http://www.alanzucconi.com/2015/10/07/how-to-integrate-arduino-with-unity/
 	public void Update()
 	{
-		//StartCoroutine (ReadData());
-		if (sp!=null) {
-			//int size = sp.BytesToRead;
-			//print (size);
-			/*if (size > 0) {
-			char [] buf = new char[256];
-			int count = sp.Read(buf,0,256);
-			//string text = new string(buf);
-			print (count);
-		}*/
-			//string Text = sp.ReadExisting();
-			//print (Text);
+//		//StartCoroutine (ReadData());
+//		if (sp!=null) {
+//			//int size = sp.BytesToRead;
+//			//print (size);
+//			/*if (size > 0) {
+//			char [] buf = new char[256];
+//			int count = sp.Read(buf,0,256);
+//			//string text = new string(buf);
+//			print (count);
+//		}*/
+//			//string Text = sp.ReadExisting();
+//			//print (Text);
 
-			/*sp.ReadTimeout=50;
-			try {
-				string Text = sp.ReadLine();
-				print (Text);
-				sp.BaseStream.Flush();
-			}
-			catch (UnityException ex) {} //TimeoutException
-*/
-/*while(sp. BytesToRead>0) {
-				string Text = sp.ReadExisting();
-				print (Text);
-			}*/
+//			/*sp.ReadTimeout=50;
+//			try {
+//				string Text = sp.ReadLine();
+//				print (Text);
+//				sp.BaseStream.Flush();
+//			}
+//			catch (UnityException ex) {} //TimeoutException
+//*/
+///*while(sp. BytesToRead>0) {
+//				string Text = sp.ReadExisting();
+//				print (Text);
+//			}*/
 
-			//byte [] buf = new byte[256];
-			//int bytesread = sp.BaseStream.Read(buf,0,256);
-			//if (bytesread>0) {
-				//print ("read "+bytesread+" bytes");
-				//sp.BaseStream.Flush();
-			//}
+//			//byte [] buf = new byte[256];
+//			//int bytesread = sp.BaseStream.Read(buf,0,256);
+//			//if (bytesread>0) {
+//				//print ("read "+bytesread+" bytes");
+//				//sp.BaseStream.Flush();
+//			//}
 
 
-			StartCoroutine
-			(
-				AsynchronousReadFromArduino
-				(
-					//(string s) => Debug.Log(s),     // Callback
-				 	(string s) => ParseData (s), //callback
-					() => Debug.LogError("Error!"), // Error callback
-				 	10f                             // Timeout (seconds)
-				)
-			);
+//			StartCoroutine
+//			(
+//				AsynchronousReadFromArduino
+//				(
+//					//(string s) => Debug.Log(s),     // Callback
+//				 	(string s) => ParseData (s), //callback
+//					() => Debug.LogError("Error!"), // Error callback
+//				 	10f                             // Timeout (seconds)
+//				)
+//			);
 
-		}
+//		}
 	}
 
 	/*public void ReadData() {
@@ -120,48 +120,48 @@ public class SerialJoystickScript : MonoBehaviour {
 		}
 	}
 
-	public IEnumerator AsynchronousReadFromArduino(Action<string> callback, Action fail, float timeout) {
-		DateTime initialTime = DateTime.Now;
-		DateTime nowTime;
-		TimeSpan diff = default(TimeSpan);
+	//public IEnumerator AsynchronousReadFromArduino(Action<string> callback, Action fail, float timeout) {
+		//DateTime initialTime = DateTime.Now;
+		//DateTime nowTime;
+		//TimeSpan diff = default(TimeSpan);
 
-		string dataString = null;
+		//string dataString = null;
 
-		do {
-			try {
-				dataString = sp.ReadLine();
-				sp.BaseStream.Flush();
-			}
-			catch (TimeoutException) {
-				dataString = null;
-			}
+		//do {
+		//	try {
+		//		dataString = sp.ReadLine();
+		//		sp.BaseStream.Flush();
+		//	}
+		//	catch (TimeoutException) {
+		//		dataString = null;
+		//	}
 			
-			if (dataString != null)
-			{
-				callback(dataString);
-				yield return null;
-			} else
-				yield return new WaitForSeconds(0.05f);
+		//	if (dataString != null)
+		//	{
+		//		callback(dataString);
+		//		yield return null;
+		//	} else
+		//		yield return new WaitForSeconds(0.05f);
 			
-			nowTime = DateTime.Now;
-			diff = nowTime - initialTime;
+		//	nowTime = DateTime.Now;
+		//	diff = nowTime - initialTime;
 			
-		} while (diff.Milliseconds < timeout);
+		//} while (diff.Milliseconds < timeout);
 		
-		//if (fail != null)
-		//	fail();
-		yield return null;
-	}
+		////if (fail != null)
+		////	fail();
+		//yield return null;
+	//}
 
 	public void OnApplicationQuit ()
 	{
-		if (sp != null) {
-			if (sp.IsOpen) {
-				print ("closing serial port");
-				sp.Close ();
-			}
-			sp = null;
-		}
+		//if (sp != null) {
+		//	if (sp.IsOpen) {
+		//		print ("closing serial port");
+		//		sp.Close ();
+		//	}
+		//	sp = null;
+		//}
 	}
 	
 

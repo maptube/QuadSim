@@ -368,6 +368,7 @@ public class QuadcopterBehaviourScript : MonoBehaviour {
         if (AltitudeHold > 100) AltitudeHold = 100;
         //Debug.Log(AltitudeHold+" "+dy+" "+throttle);
         //throttle = throttle * 2.0f - 1.0f; //convert 0..1 to -1..1
+        
 
         //Touch joystick for Android - NOTE, this is added to the scene as a JoystickGameObject with TXJoystick script attached, which is STATIC
         //One stick, coupled ailerons and rudder, fixed throttle

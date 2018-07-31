@@ -26,7 +26,7 @@ public class LookAtQuadcopter : MonoBehaviour {
 	//TODO: add chase cam etc?
 	enum ViewpointType { vpFPV, vpRearFPV, vpGimbal, vp3rdPerson };
 
-	ViewpointType _ViewType = ViewpointType.vp3rdPerson; // ViewpointType.vpFPV;
+    ViewpointType _ViewType = ViewpointType.vpRearFPV; // ViewpointType.vp3rdPerson; // ViewpointType.vpFPV;
 	ViewpointType ViewType
 	{
 		get { return _ViewType; }

@@ -115,7 +115,7 @@ public class SampleListener
             Vector normal = hand.PalmNormal;
             Vector direction = hand.Direction;
             _handPitch = direction.Pitch; // * 180.0f / Mathf.PI;
-            _handRoll = normal.Roll; // * 180.0f / Mathf.PI;
+            _handRoll = normal.Roll; // * 180.0f / Mathf.PI; NOTE: 0.35=20 degrees, 1.22=70 degrees
             _handYaw = direction.Yaw; // * 180.0f / Mathf.PI;
             _palmPosition = hand.PalmPosition;
             _palmVelocity = hand.PalmVelocity; //NOTE: this is a Leap.Vector not a Unity one
@@ -135,8 +135,8 @@ public class LeapMotionBehaviourScript : MonoBehaviour {
     /// <summary>
     /// Hand confidence thresholds below this are discarded and result in null control inputs (a=0,e=0,r=0)
     /// </summary>
-    public const float confidenceThreshold = 0.5f;
-
+    public const float confidenceThreshold = 0.9f;
+    public static float LastAileron, LastElevator, LastRudder, LastThrottle;
 
     public static Controller leapController;
     public static SampleListener leapListener;
@@ -184,10 +184,10 @@ public class LeapMotionBehaviourScript : MonoBehaviour {
     public static void GetControlInputs(out float Aileron, out float Elevator, out float Rudder, out float Throttle)
     {
         //NOTE: aileron, elevator, rudder are -1..+1, while throttle is 0..1
-        Aileron = 0;
-        Elevator = 0;
-        Rudder = 0;
-        Throttle = 0;
+        Aileron = 0.9f*LastAileron; //this is designed to back off the controls softly on loss of LeapMotion tracking
+        Elevator = 0.9f*LastElevator;
+        Rudder = 0.9f*LastRudder;
+        Throttle = 0.9f*LastThrottle;
 
         //use the values last seen by the leap listener event handler object
         //Debug.Log("confidence: " + leapListener.handConfidence);
@@ -212,6 +212,11 @@ public class LeapMotionBehaviourScript : MonoBehaviour {
                 else if (Throttle > 1) Throttle = 1;
             }
         }
+        //remember last positions in case we lose tracking
+        LastAileron = Aileron;
+        LastElevator = Elevator;
+        LastRudder = Rudder;
+        LastThrottle = Throttle;
     }
 
     #endregion Methods
