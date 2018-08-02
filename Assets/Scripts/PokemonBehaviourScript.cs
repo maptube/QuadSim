@@ -61,6 +61,7 @@ public class PokemonBehaviourScript : MonoBehaviour {
             Vector3 newpos = Positions[newi];
             if (!isClose(newpos,PikachuPos)&&!isClose(newpos,CharmanderPos)&&!isClose(newpos,BulbasaurPos)&&!isClose(newpos,SquirtlePos))
             {
+                newpos.y = Terrain.activeTerrain.SampleHeight(newpos); //sit pokemon on the terrain
                 return newpos;
             }
             newi=(newi+1)%Positions.Length;
