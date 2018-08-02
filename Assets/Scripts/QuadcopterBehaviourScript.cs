@@ -147,9 +147,10 @@ public class QuadcopterBehaviourScript : MonoBehaviour {
 	bool AltitudeHoldModeEnabled = false;
 	float AltitudeHold = 0; //altitude to hold to
 	float aileron, elevator, rudder, throttle; //read from the joysitck [-1..+1]
+    float leapDeltaY = 0; //debug for leap motion dy value
 
     //simulated MEMs sensor angles and rates
-	Vector3 gyroAngles;
+    Vector3 gyroAngles;
 	Vector3 gyroRates;
 
 	//float E0,E1,E2,E3; //ESC inputs
@@ -238,14 +239,15 @@ public class QuadcopterBehaviourScript : MonoBehaviour {
 		);*/
 		GUI.Label (textArea,
 		           "A: " + aileron + "\n"
-		           + "RollAngle: "+gyroAngles.x+" Target: "+aileron*AxisRateRoll+"\n"
+		           //+ "RollAngle: "+gyroAngles.x+" Target: "+aileron*AxisRateRoll+"\n"
 		           +"E: "+elevator+"\n"
-		           +"R: "+rudder+"\n"
-                   +"T: "+throttle+"\n"
-		           +"YawRateTarget: "+rudder*AxisRateYaw+" GyroRate: "+gyroRates.z+"\n"
-		           +"gyroRates: "+gyroRates.x.ToString ("N2")+" "+gyroRates.y.ToString ("N2")+" "+gyroRates.z.ToString ("N2")+"\n"
+		           //+"R: "+rudder+"\n"
+                   //+"T: "+throttle+"\n"
+		           //+"YawRateTarget: "+rudder*AxisRateYaw+" GyroRate: "+gyroRates.z+"\n"
+		           //+"gyroRates: "+gyroRates.x.ToString ("N2")+" "+gyroRates.y.ToString ("N2")+" "+gyroRates.z.ToString ("N2")+"\n"
                    +"thrust: "+Thrust+"\n"
-                   +"AltHold: "+AltitudeHold+"\n"
+                   +"deltaY: "+Mathf.Round(leapDeltaY*100.0f)+" cm/sec\n"
+                   + "AltHold: "+AltitudeHold+"\n"
 		);
 	}
 
@@ -360,9 +362,11 @@ public class QuadcopterBehaviourScript : MonoBehaviour {
         if (!AltitudeHoldModeEnabled) ToggleAltHold(); //keep altitude hold mode on in LeapMotion joystick mode
         //if (throttle > 0) AltitudeHold += 0.1f; //throttle not really throttle - it's a delta height
         //if (throttle < 0) AltitudeHold -= 0.1f;
-        float dy = (throttle-0.2f)*0.1f; //direct height (throttle) minus alt hold height to get delta height i.e. we want to go up or down an amount
+        //was (throttle-0.2)*0.1
+        float dy = (throttle-0.3f)*0.2f; //direct height (throttle) minus alt hold height to get delta height i.e. we want to go up or down an amount
         if (dy > 2) dy = 2;
         else if (dy < -2) dy = -2;
+        this.leapDeltaY = dy;
         AltitudeHold += dy; //take direct height from hand (throttle), subtract alt hold height and add a fraction on to alt hold - move up or down based on height difference
         if (AltitudeHold < 0) AltitudeHold = 0;
         if (AltitudeHold > 100) AltitudeHold = 100;
